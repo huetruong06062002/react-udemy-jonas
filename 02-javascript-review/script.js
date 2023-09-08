@@ -142,72 +142,59 @@ function getBooks() {
 function getBook(id) {
   return data.find((d) => d.id === id);
 }
-
 /*
+//Destructuring, rest, spead, template literals
 
-//1.Destructoring
-const book = getBook(3);
-
-const { title, author, genres, pages, publicationDate, hasMovieAdaptation } =
+const book = getBook(2);
+book;
+// const title = book.title;
+// const author = book.author;
+const { title, author, pages, publicationDate, genres, hasMovieAdaptation } =
   book;
 
-console.log(title, author, genres);
+//...restGenders : rest
+const [firstGenres, secondGenres, ...restGenders] = genres;
+// firstGenres = genres [0];
+// secondGenres = genres [1];
+console.log(title, author);
+console.log(firstGenres, secondGenres, restGenders);
 
-// const primaryGenre = genres[0];
-// const secondaryGenre = genres[1];
+const newGenres = ["Epic Fantasy", ...genres];
+console.log(newGenres);
 
-const [primaryGenre, secondaryGenre, ...otherGeneres] = genres;
-console.log(primaryGenre, secondaryGenre, otherGeneres);
-
-//2. rest, spread
-genres;
-const newGenres = ["epic fantasy", ...genres];
-newGenres;
-
-book;
-const updateBook = {
+const updatedBook = {
   ...book,
-  //Adding a new property
-  moviePublicationDate: "2001-12-19",
-
-  //override
+  //Adding new property
+  moviePublicationDate: "2001-12-9",
+  //Overwrite
   pages: 1210,
 };
-updateBook;
-
-//3.template literals
-//5. Arrow functions
-const getYear = (str) => str.split("-")[0];
-
-console.log(getYear(publicationDate));
-const summary = `${title}, a ${pages}-page long book, was written by 
-${author} and publish in ${getYear(publicationDate)}. The book has${
-  hasMovieAdaptation ? "" : " not"
+updatedBook;
+const formatPublicationDate = (str) => str.replace(/-/g, "/");
+const sumary = `${title}, a ${pages}-page long book, was written by ${author} 
+and published in ${formatPublicationDate(publicationDate)}. The book has ${
+  hasMovieAdaptation ? "" : "not"
 } been adapted as a movie`;
+sumary;
 
-summary;
+pages;
+const pageRange = pages > 100 ? "over a thousand" : "less than 1000";
+pageRange;
+console.log(`The book has ${pageRange} pages`);
+publicationDate;
 
-//4.Ternaries instead of
-const pagesRange = pages > 1000 ? "over than 1000" : "less than 1000";
+//----------------------------------------------------------------
+// &&: falsy : 0, '', null, undefined, false, NaN
+// ||: truethy
 
-pagesRange;
-
-console.log(`The book has ${pagesRange} pages`);
-
-//6.Logical Operators
-
-//&&: get false value - first; || get true
-console.log(true && true && "Some string");
+console.log(true && "Some string");
 console.log(false && "Some string");
-
-console.log(hasMovieAdaptation && " This book has a movie");
-
-//falsy: 0, '', null, undefined, false,
-console.log("jonas" && "Some string");
+console.log(hasMovieAdaptation && "This book has a movie");
+console.log("Jonas" && "Some string");
 console.log(0 && "Some string");
 
-console.log(true || "Some string");
-console.log(false || "Some string");
+console.log(true || "Some thing");
+console.log(false || "not thing");
 
 console.log(book.translations.spanish);
 
@@ -218,104 +205,108 @@ console.log(book.reviews.librarything.reviewsCount);
 const countWrong = book.reviews.librarything.reviewsCount || "no data";
 countWrong;
 
-//??: return second value when first value is null or undefined
-const count = book.reviews.librarything.reviewsCount ?? "no data";
+//??: return two value when first value is undefined or null
+const count = undefined ?? "no data";
 count;
-
-//7 .Optional channing
+//----------------------------------------------------------------
+//optional chaining; don't show error
 function getTotalReviewCount(book) {
-  const goodreads = book.reviews?.goodreads?.reviewsCount;
-  const librarything = book.reviews?.librarything?.reviewsCount ?? 0;
+  const goodreads = book.reviews?.goodreads.reviewsCount;
+  const librarything = book.reviews?.librarything.reviewsCount ?? 0;
   librarything;
   return goodreads + librarything;
 }
-console.log(getTotalReviewCount(book));
 
+console.log(getTotalReviewCount(book));
+//----------------------------------------------------------------
 */
 
+//----------------------------------------------------------------
 /*
-
-//8. map, filter, reduce
-function getTotalReviewCount(book) {
-  const goodreads = book.reviews?.goodreads?.reviewsCount;
-  const librarything = book.reviews?.librarything?.reviewsCount ?? 0;
-  librarything;
-  return goodreads + librarything;
-}
+//map, filter, reduce, sort, immutable arrays, propmise, async/await
 const books = getBooks();
 books;
 
-const x = [1, 2, 3, 4, 5].map((el) => el * 2);
+const x = [1, 2, 3, 4, 5].map((el) => {
+  return el * 2;
+});
 console.log(x);
 
-const title = books.map((book) => book.title);
-console.log(title);
+const titles = books.map((book) => book.title);
+titles;
+
+// const essentialData = books.map((book) => {
+//   return {
+//     title: book.title,
+//     author: book.author,
+//   };
+// });
 
 const essentialData = books.map((book) => ({
   title: book.title,
   author: book.author,
-  reviewsCount: getTotalReviewCount(book),
+  reviewsCount: 444,
 }));
 essentialData;
 
-const longBooksWithMovie = books
-  .filter((book) => book.pages > 500)
-  .filter((book) => book.hasMovieAdaptation);
-longBooksWithMovie;
+const longBooks = books.filter((book) => book.pages > 500);
+longBooks;
 
-const adventureBooks = books
-  .filter((books) => books.genres.includes("adventure"))
-  .map((book) => book.title);
-adventureBooks;
+const idBookscontainAdventure = books
+  .filter((book) => book.genres.includes("adventure"))
+  .map((book) => book.id);
 
-const pagesAllBooks = books.reduce((acc, book) => acc + book.pages, 0);
+idBookscontainAdventure;
+
+const pagesAllBooks = books.reduce((sum, book) => sum + book.pages, 0);
 pagesAllBooks;
 
-const arr = [3, 7, 1, 9, 6];
+// a - b  < 0 => asc, a - b > 0 => desc
+const arr = [3, 7, 9, 1, 2, 5, 8];
+const sortedArr = arr.slice().sort((a, b) => a - b);
+arr;
+sortedArr;
 
-const sorted = arr.sort((a, b) => a - b);
-// a - b < 0 => ascending, a - b> 0 => descending
-// a = 3, b = 7 => negative => ascending
-// ascending
-sorted;
+const sortBooksByPage = books.sort((a, b) => b.pages - a.pages);
+sortBooksByPage;
 
-const sortedByPages = books.slice().sort((a, b) => b.pages - a.pages);
-sortedByPages;
+//----------------------------------------------------------------
+//mutate array ; add, delete, update without changing the original one.
 
 //1) Add book object to array
 const newBook = {
   id: 6,
   title: "Harry Potter and the Chamber of Secrets",
-  author: "J.K. Rowling",
+  author: "J. K. Rowling",
 };
 
-const booksAfterAdd = [...books, newBook];
-booksAfterAdd;
-
-//Immutable array
+const booksAfterAddNewBook = [newBook, ...books];
+booksAfterAddNewBook;
 //2) Delete book object from array
-
-const booksAfterDelete = booksAfterAdd.filter((book) => book.id !== 3);
+const booksAfterDelete = books.filter((book) => book.id !== 3);
 booksAfterDelete;
 
 //3) Update book object in the array
-const booksAfterUpdate = booksAfterAdd.map((book) =>
-  book.id === 1 ? { ...book, ages: 12 } : book
+const bookAfterUpdate = books.map((book) =>
+  book.id === 1 ? { ...book, pages: "1200" } : book
 );
-booksAfterUpdate;
-
+bookAfterUpdate;
 */
 
-// fetch("https://jsonplaceholder.typicode.com/todos")
-//   .then((res) => res.json())
-//   .then((data) => console.log(data));
+//----------------------------------------------------------------
+//Async, promise :usually use for fetch api.
 
-async function getToDo() {
+/*
+fetch("https://jsonplaceholder.typicode.com/todos")
+  .then((res) => res.json())
+  .then((data) => console.log(data));
+
+data;
+*/
+async function getTodos() {
   const res = await fetch("https://jsonplaceholder.typicode.com/todos");
   const data = await res.json();
-  return data;
+  console.log(data);
 }
 
-const todos = getToDo();
-console.log(todos);
-console.log("jonas");
+getTodos();
